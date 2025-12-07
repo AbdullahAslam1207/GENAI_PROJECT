@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  rag-chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag-chatbot
+    image: rag-chatbot:latest
+    
+    # Environment variables
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    
+    # Mount volumes for persistence
+    volumes:
+      - ./data/documents:/app/data/documents:ro  # Read-only documents
+      - ./indexes:/app/indexes                    # Persistent indexes
+      - ./logs:/app/logs                          # Persistent logs
+      - ./.env:/app/.env:ro                       # Environment file
+    
+    # Resource limits (adjust based on EC2 instance type)
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Keep container running for interactive use
+    command: tail -f /dev/null
+    
+    # Network
+    networks:
+      - rag-network
+
+networks:
+  rag-network:
+    driver: bridge

@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.py[cod]
+.dockerignore
+Genai_report.pdf
+*.docx
+*.sh
+*.txt
+config.bat
+node_modules
